@@ -7,11 +7,10 @@ const User = require('./models/User');
 const app = express();
 
 // --- НАСТРОЙКА CORS ---
-// Замени 'https://your-project.vercel.app' на реальный URL твоего фронтенда
 app.use(cors({
-  origin: ['http://localhost:5173', 'https://bilim-hub.vercel.app/'], 
+  origin: '*', 
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  credentials: true
+  allowedHeaders: ['Content-Type']
 }));
 
 app.use(express.json());
