@@ -35,7 +35,7 @@ app.post('/api/register', async (req, res) => {
   }
 });
 
-// 2. ОБНОВЛЕНИЕ МОНЕТ
+// 2. ОБНОВЛЕНИЕ МОНЕТ (Квесты)
 app.post('/api/update-coins', async (req, res) => {
   const { userId, coinsToAdd } = req.body;
   try {
@@ -43,6 +43,7 @@ app.post('/api/update-coins', async (req, res) => {
     if (user) {
       user.mentCoins = (user.mentCoins || 0) + coinsToAdd;
       
+      // Логика званий
       if (user.mentCoins >= 1000) user.rank = "Мастер ОРТ";
       else if (user.mentCoins >= 500) user.rank = "Активный ученик";
       
@@ -56,17 +57,7 @@ app.post('/api/update-coins', async (req, res) => {
   }
 });
 
-// 3. АДМИНКА
-app.get('/api/admin/users', async (req, res) => {
-  try {
-    const users = await User.find({});
-    res.json(users);
-  } catch (error) {
-    res.status(500).json({ message: "Ошибка сервера" });
-  }
-});
-
-// 4. ДАННЫЕ ПОЛЬЗОВАТЕЛЯ
+// 3. ДАННЫЕ ОДНОГО ПОЛЬЗОВАТЕЛЯ (Для Profile.jsx)
 app.get('/api/user/:userId', async (req, res) => {
   try {
     const user = await User.findById(req.params.userId);
@@ -80,6 +71,26 @@ app.get('/api/user/:userId', async (req, res) => {
     }
   } catch (error) {
     res.status(500).json({ message: "Ошибка сервера" });
+  }
+});
+
+// 4. СПИСОК ВСЕХ ПОЛЬЗОВАТЕЛЕЙ (Для AdminPanel.jsx)
+app.get('/api/users', async (req, res) => {
+  try {
+    const users = await User.find({});
+    res.json(users);
+  } catch (err) {
+    res.status(500).json({ message: "Ошибка при получении списка" });
+  }
+});
+
+// 5. УДАЛЕНИЕ ПОЛЬЗОВАТЕЛЯ (Для AdminPanel.jsx)
+app.delete('/api/user/:id', async (req, res) => {
+  try {
+    await User.findByIdAndDelete(req.params.id);
+    res.json({ message: "Удалено" });
+  } catch (err) {
+    res.status(500).json({ message: "Ошибка при удалении" });
   }
 });
 
